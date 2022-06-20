@@ -1,4 +1,4 @@
-package rotas
+package routes
 
 import (
 	"devBook/api/src/controllers"
@@ -10,31 +10,31 @@ var routesUsers = []Route{
 		URI:                   "/users",
 		Method:                http.MethodPost,
 		Function:              controllers.CriarUsuario,
-		RequiresAuthntication: false,
+		RequiresAuthentication: false,
 	},
 	{
 		URI:                   "/users",
 		Method:                http.MethodGet,
 		Function:              controllers.BuscarUsuarios,
-		RequiresAuthntication: false,
+		RequiresAuthentication: false,
 	},
 	{
-		uri:                   "/users/{userid}",
-		method:                http.MethodGet,
+		URI:                   "/users/{userid}",
+		Method:                http.MethodGet,
 		Function:              controllers.BuscarUsuario,
-		requiresauthntication: false,
+		RequiresAuthentication: false,
 	},
 	{
-		uri:                   "/users/{userid}",
-		method:                http.MethodPut,
+		URI:                   "/users/{userid}",
+		Method:                http.MethodPut,
 		Function:              controllers.AtualizarUsuario,
-		requiresauthntication: false,
+		RequiresAuthentication: false,
 	},
 	{
 
 		URI:                   "/users/{userid}",
 		Method:                http.MethodDelete,
 		Function:              controllers.DeletarUsuario,
-		RequiresAuthntication: false,
+		RequiresAuthentication: false,
 	},
 }

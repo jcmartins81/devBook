@@ -1,4 +1,4 @@
-package rotas
+package routes
 
 import (
 	"net/http"
@@ -8,10 +8,10 @@ import (
 
 // Rota representa todas as rotas da API
 type Route struct {
-	Uri                   string
+	URI                   string
 	Method                string
 	Function              func(http.ResponseWriter, *http.Request)
-	RequiresAuthntication bool
+	RequiresAuthentication bool
 }
 
 func ConfigRouter(r *mux.Router) *mux.Router {
