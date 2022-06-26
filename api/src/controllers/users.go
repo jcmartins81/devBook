@@ -1,9 +1,31 @@
 package controllers
 
-import "net/http"
+import (
+	"devBook/api/src/banco"
+	"devBook/api/src/models"
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"net/http"
+
+	"golang.org/x/tools/go/analysis/passes/ifaceassert"
+)
 
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Criando UsuÃ¡rio!"))
+	bodyRequest := ioutil.ReadAll(r.Body)
+	if erro != nil {
+		log.Fatal(error)
+	}
+
+	var user models.User
+	if erro = json.Unmarshal(bodyRequest, &user); erro != nil {
+		log.Fatal(erro)
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		log.Fatal(erro€ý,€ý,)
+	}
 }
 
 func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
