@@ -3,29 +3,38 @@ package controllers
 import (
 	"devBook/api/src/banco"
 	"devBook/api/src/models"
+	"devBook/api/src/repositorios"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-
-	"golang.org/x/tools/go/analysis/passes/ifaceassert"
 )
 
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
-	bodyRequest := ioutil.ReadAll(r.Body)
+	bodyRequest, _ := ioutil.ReadAll(r.Body)
 	if erro != nil {
-		log.Fatal(error)
+		log.Fatal(erro)
 	}
 
-	var user models.User
-	if erro = json.Unmarshal(bodyRequest, &user); erro != nil {
+	var usuario models.User
+	if erro := json.Unmarshal(bodyRequest, &usuario); erro != nil {
 		log.Fatal(erro)
 	}
 
 	db, erro := banco.Conectar()
 	if erro != nil {
-		log.Fatal(erro€ý,€ý,)
+		log.Fatal(erro)
 	}
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
+	usuarioID, erro := repositorio.Criar(usuario)
+	if erro != nil {
+		log.Fatal(erro)
+	}
+
+	w.Write([]byte(fmt.Sprintf("Id inserido: %d", usuarioID)))
 }
 
 func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
