@@ -8,7 +8,7 @@ import (
 )
 
 // Conectar abre a conexão com o DB
-func Conectar(*sql.DB, error) {
+func Conectar() (*sql.DB, error) {
 	db, erro := sql.Open("mysql", config.StringConnection)
 	if erro != nil {
 		return nil, erro
