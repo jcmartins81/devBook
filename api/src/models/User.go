@@ -16,15 +16,15 @@ type User struct {
 }
 
 // Preparar vai chamar metodos para formatar e validar o usuario
-func (user *User) Preparar() error {
-	if err := user.validar(); err != nil {
+func (user *User) Preparar(etapa string) error {
+	if err := user.validar(etapa); err != nil {
 		return err
 	}
 	user.formatar()
 	return nil
 }
 
-func (user *User) validar() error {
+func (user *User) validar(etapa string) error {
 	if user.Name == "" {
 		return errors.New("Nome não pode ser vazio")
 	}
@@ -37,6 +37,11 @@ func (user *User) validar() error {
 	if user.Password == "" {
 		return errors.New("Senha não pode ser vazio")
 	}
+
+	if etapa == "cadastro" && usuario.Password == "" {
+		return errors.New("A senha é obrigatória para realizar o cadastro")
+	}
+
 	return nil
 }
 

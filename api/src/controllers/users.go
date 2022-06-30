@@ -50,8 +50,9 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// BuscarUsuario busca um usuário salvo no banco
 func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
-	nomeOuNick := strings.ToLower(r.URL.Query("usuario"))
+	nomeOuNick := strings.ToLower(r.URL.Query().Get("usuario"))
 
 	db, erro := banco.Conectar()
 	if erro != nil {
@@ -74,7 +75,7 @@ func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
 
 // BuscarUsuario Busca um usuario pelo ID
 func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
-	Parametros := mux.Vars(r)
+	parametros := mux.Vars(r)
 
 	usuarioID, erro := strconv.ParseUint(parametros["usuarioID"], 10, 64)
 	if erro != nil {
@@ -100,8 +101,45 @@ func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// AtualizarUsuario altera as informações de um usuário no banco
 func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Atualizando um usuario"))
+	parametros := mux.Vars(r)
+	usuarioID, erro := strconv.ParseUint(parametros["usuarioID"], 10, 64)
+	if erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	corpoRequisicao, erro := ioutil.ReadAll(r.Body)
+	if erro != nil {
+		respostas.Erro(w, http.StatusUnprocessableEntity, erro)
+		return
+	}
+
+	var usuario models.User
+	if erro = json.Unmarshal(corpoRequisicao, &usuario); erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	if erro = usuario.Preparar("edicao"); erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
+	if erro = repositorio.AtualizarUsuario(usuarioID, usuario); erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	respostas.JSON(w, http.StatusNoContent, nil)
 }
 
 func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
