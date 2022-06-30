@@ -4,45 +4,100 @@ import (
 	"devBook/api/src/banco"
 	"devBook/api/src/models"
 	"devBook/api/src/repositorios"
+	"devBook/api/src/respostas"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
+	"strconv"
+	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
-	bodyRequest, _ := ioutil.ReadAll(r.Body)
+	bodyRequest, erro := ioutil.ReadAll(r.Body)
 	if erro != nil {
-		log.Fatal(erro)
+		respostas.Erro(w, http.StatusUnprocessableEntity, erro)
+		return
 	}
 
 	var usuario models.User
 	if erro := json.Unmarshal(bodyRequest, &usuario); erro != nil {
-		log.Fatal(erro)
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	if erro := usuario.Preparar(); erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
 	}
 
 	db, erro := banco.Conectar()
 	if erro != nil {
-		log.Fatal(erro)
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
 	}
 	defer db.Close()
 
 	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
-	usuarioID, erro := repositorio.Criar(usuario)
+	usuario.ID, erro = repositorio.Criar(usuario)
 	if erro != nil {
-		log.Fatal(erro)
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("Id inserido: %d", usuarioID)))
+	respostas.JSON(w, http.StatusCreated, usuario)
+
 }
 
 func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Todos os usuários"))
+	nomeOuNick := strings.ToLower(r.URL.Query("usuario"))
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
+	usuarios, erro := repositorio.Buscar(nomeOuNick)
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	respostas.JSON(w, http.StatusOK, usuarios)
+
 }
 
+// BuscarUsuario Busca um usuario pelo ID
 func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Busca um Usuário"))
+	Parametros := mux.Vars(r)
+
+	usuarioID, erro := strconv.ParseUint(parametros["usuarioID"], 10, 64)
+	if erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
+	usuario, erro := repositorio.BuscarPorID(usuarioID)
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	respostas.JSON(w, http.StatusOK, usuario)
+
 }
 
 func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
