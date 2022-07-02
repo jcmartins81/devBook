@@ -38,7 +38,7 @@ func (user *User) validar(etapa string) error {
 		return errors.New("Senha não pode ser vazio")
 	}
 
-	if etapa == "cadastro" && usuario.Password == "" {
+	if etapa == "cadastro" && user.Password == "" {
 		return errors.New("A senha é obrigatória para realizar o cadastro")
 	}
 

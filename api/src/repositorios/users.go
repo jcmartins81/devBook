@@ -10,7 +10,7 @@ type Usuarios struct {
 	db *sql.DB
 }
 
-//NovoRepositorioDeUsuarios cria um repositorio de Usuários
+//NovoRepositorioDeUsuarios cria um repositorio de UsuÃ¡rios
 func NovoRepositorioDeUsuarios(db *sql.DB) *Usuarios {
 	return &Usuarios{db}
 }
@@ -67,7 +67,7 @@ func (repositorio Usuarios) Buscar(nomeOuNick string) ([]models.User, error) {
 
 }
 
-// BuscarPorID traz um usuátio do banco de dados
+// BuscarPorID traz um usuÃ¡tio do banco de dados
 func (repositorio Usuarios) BuscarPorID(ID uint64) (models.User, error) {
 	linhas, erro := repositorio.db.Query(
 		"select id, nome, NickName, email, criatedAt from usuarios where id = ?",
@@ -93,4 +93,20 @@ func (repositorio Usuarios) BuscarPorID(ID uint64) (models.User, error) {
 	}
 
 	return usuario, nil
+}
+
+func (repositorio Usuarios) AtualizarUsuario(ID uint64, usuario models.User) error {
+	statement, erro := repositorio.db.Prepare(
+		"update usuarios set nome = ?, nick = ?, email = ? where id = ?",
+	)
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(usuario.Name, usuario.NickName, usuario.Email, ID); erro != nil {
+		return erro
+	}
+
+	return nil
 }
