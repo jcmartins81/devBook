@@ -110,3 +110,38 @@ func (repositorio Usuarios) AtualizarUsuario(ID uint64, usuario models.User) err
 
 	return nil
 }
+//Deletar exclui as informações de um usuário no BAnco de Dados
+func (repositorio Usuarios) Deletar(ID uint64) error {
+	statement, erro := repositorio.db.Prepare("delete from usuarios where id = ?")
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(ID); erro != nil {
+		return erro
+	}
+
+	return nil
+}
+
+// BuscarPorEmail busca um usuario por email e retorna seu id e senha
+func (repositorio Usuarios) BuscarPorEmail(email string) (models.User, error) {
+	linha, erro := repositorio.db.Query(
+		"select id, senha from usuarios where email = ?", email
+	)
+	if erro != nil {
+		return models.User{}, erro
+	}
+	defer linha.Close()
+
+	var usuario models.User
+
+	if linha.Next() {
+		if erro = linha.Scan(&usuario.ID, &usuario.Senha); erro != nil {
+			return models.User{}, erro
+		}
+	}
+
+	return usuario, nil
+}
