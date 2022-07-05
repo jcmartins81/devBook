@@ -39,10 +39,9 @@ func (user *User) validar(etapa string) error {
 	if user.Email == "" {
 		return errors.New("Email não pode ser vazio")
 	}
-	if erro := checkmail.ValidateFormat(usuario.Email); erro != nil {
-		return errors.
+	if erro := checkmail.ValidateFormat(user.Email); erro != nil {
+		return erro
 	}
-
 
 	if user.Password == "" {
 		return errors.New("Senha não pode ser vazio")
@@ -61,12 +60,12 @@ func (user *User) formatar(etapa string) error {
 	user.Email = strings.TrimSpace(user.Email)
 
 	if etapa == "cadastro" {
-		senhaComHash, erro := seguranca.Hash(usuario.Senha)
+		senhaComHash, erro := seguranca.Hash(user.Password)
 		if erro != nil {
 			return erro
 		}
 
-		usuario.senha = string(senhaComHash)
+		user.Password = string(senhaComHash)
 	}
 
 	return nil

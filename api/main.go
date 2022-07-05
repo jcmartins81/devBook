@@ -1,12 +1,26 @@
 package main
 
 import (
+	"crypto/rand"
 	"devBook/api/src/config"
 	"devBook/api/src/router"
+	"encoding/base64"
 	"fmt"
 	"log"
 	"net/http"
 )
+
+cc init() {
+	chave := make([]byte, 64)
+
+	if _, erro := rand.Read(chave); erro != nil {
+		log.Fatal(erro)
+	}
+
+	stringBase64 := base64.StdEncoding.EncodeToString(chave)
+
+	fmt.Println(stringBase64)
+}
 
 func main() {
 	config.Carregar()
