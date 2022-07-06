@@ -14,6 +14,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//CriarUsuario Acrescenta um usuário no Banco de Dados
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	bodyRequest, erro := ioutil.ReadAll(r.Body)
 	if erro != nil {
@@ -50,7 +51,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// BuscarUsuario busca um usuário salvo no banco
+// BuscarUsuarios busca um usuário salvo no banco
 func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
 	nomeOuNick := strings.ToLower(r.URL.Query().Get("usuario"))
 
@@ -142,6 +143,7 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 	respostas.JSON(w, http.StatusNoContent, nil)
 }
 
+//DeletarUsuario exclui um usuário do Banco de Dados
 func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
 	parametros := mux.Vars(r)
 
