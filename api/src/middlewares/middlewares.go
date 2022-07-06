@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"devBook/api/src/autenticacao"
 	"log"
 	"net/http"
 )

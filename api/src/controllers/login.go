@@ -1,12 +1,10 @@
 package controllers
 
 import (
-	"devBook/api/src/autenticacao"
 	"devBook/api/src/banco"
 	"devBook/api/src/models"
 	"devBook/api/src/repositorios"
 	"devBook/api/src/respostas"
-	"devBook/api/src/seguranca"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
